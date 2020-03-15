@@ -23,7 +23,7 @@ on:
 
 env:
   REPO_URL: https://github.com/openwrt/openwrt
-  REPO_BRANCH: openwrt-19.07
+  REPO_BRANCH: master
   CONFIG_FILE: rpi4-offical-openwrt.config
   DIY_SH: offical-openwrt.sh
   FREE_UP_DISK: true
