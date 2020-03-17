@@ -9,15 +9,15 @@
 name: Build Raspberry Pi 3 Lean's OpenWrt
 
 on: 
-#  release:
-#    types: [published]
-#  push:
-#    branches: 
-#      - master
-#    paths:
-#      - 'rpi3-lean-openwrt.config'
+  release:
+    types: [published]
+  push:
+    branches: 
+      - master
+    paths:
+      - 'rpi3-lean-openwrt.config'
   schedule:
-    - cron: 20 01 * * *
+    - cron: 0 15 * * *
 #  watch:
 #    types: [started]
 
