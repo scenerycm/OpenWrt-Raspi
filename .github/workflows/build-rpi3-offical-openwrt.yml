@@ -22,7 +22,7 @@ on:
 #    types: [started]
 
 env:
-  REPO_URL: https://github.com/scenerycm/openwrt
+  REPO_URL: https://github.com/openwrt/openwrt
   REPO_BRANCH: openwrt-19.07
   CONFIG_FILE: rpi3-offical-openwrt.config
   DIY_SH: offical-openwrt.sh
