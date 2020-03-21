@@ -34,6 +34,9 @@ popd
 mkdir package/community
 pushd package/community
 
+# Add luci-app-transmission
+# git clone https://github.com/coolsnowwolf/luci/tree/master/applications/luci-app-transmission
+
 # Add mentohust & luci-app-mentohust.
 git clone https://github.com/BoringCat/luci-app-mentohust
 git clone https://github.com/KyleRicardo/MentoHUST-OpenWrt-ipk
