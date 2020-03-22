@@ -44,6 +44,7 @@ cp -r packages/utils/cgroupfs-mount  ./
 cp -r packages/utils/containerd  ./
 cp -r packages/utils/libnetwork  ./
 cp -r packages/utils/tini  ./
+cp -r packages/utils/runc  ./
 rm -rf packages/
 
 # Add mentohust & luci-app-mentohust.
