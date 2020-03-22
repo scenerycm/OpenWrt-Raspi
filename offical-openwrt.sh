@@ -34,18 +34,16 @@ popd
 mkdir package/community
 pushd package/community
 
-# Add luci-app-transmission
-# git clone https://github.com/coolsnowwolf/luci/tree/master/applications/luci-app-transmission
 
 # Add docker-ce
-git clone https://github.com/openwrt/packages
-cp -r packages/utils/docker-ce  ./
-cp -r packages/utils/cgroupfs-mount  ./
-cp -r packages/utils/containerd  ./
-cp -r packages/utils/libnetwork  ./
-cp -r packages/utils/tini  ./
-cp -r packages/utils/runc  ./
-rm -rf packages/
+# git clone https://github.com/openwrt/packages
+# cp -r packages/utils/docker-ce  ./
+# cp -r packages/utils/cgroupfs-mount  ./
+# cp -r packages/utils/containerd  ./
+# cp -r packages/utils/libnetwork  ./
+# cp -r packages/utils/tini  ./
+# cp -r packages/utils/runc  ./
+# rm -rf packages/
 
 # Add mentohust & luci-app-mentohust.
 git clone https://github.com/BoringCat/luci-app-mentohust
