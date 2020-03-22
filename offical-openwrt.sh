@@ -37,13 +37,14 @@ pushd package/community
 
 # Add docker-ce
 # git clone https://github.com/openwrt/packages
-# cp -r packages/utils/docker-ce  ./
-# cp -r packages/utils/cgroupfs-mount  ./
-# cp -r packages/utils/containerd  ./
-# cp -r packages/utils/libnetwork  ./
-# cp -r packages/utils/tini  ./
-# cp -r packages/utils/runc  ./
-# rm -rf packages/
+git clone -b dev-19.07 https://github.com/Lienol/openwrt-packages
+cp -r openwrt-packages/utils/docker-ce  ./
+cp -r openwrt-packages/utils/cgroupfs-mount  ./
+cp -r openwrt-packages/utils/containerd  ./
+cp -r openwrt-packages/utils/libnetwork  ./
+cp -r openwrt-packages/utils/tini  ./
+cp -r openwrt-packages/utils/runc  ./
+rm -rf openwrt-packages/
 
 # Add mentohust & luci-app-mentohust.
 git clone https://github.com/BoringCat/luci-app-mentohust
@@ -86,24 +87,18 @@ git clone https://github.com/destan19/OpenAppFilter
 git clone https://github.com/SuLingGG/default-settings
 
 # Add luci-app-vssr
-git clone https://github.com/Leo-Jo-My/luci-app-vssr
+# git clone https://github.com/Leo-Jo-My/luci-app-vssr
 
 # Dependces & Optimizations for luci-app-vssr
-git clone https://github.com/Leo-Jo-My/my
-cp -r my/dnscrypt-proxy-full ./
-cp -r my/openwrt-dnsforwarder ./
-cp -r my/openwrt-udp2raw-speeder ./
-cp -r my/GoQuiet ./
-cp -r my/chinadns ./
-rm -rf my/
-
-# svn co https://github.com/Leo-Jo-My/my/trunk/dnscrypt-proxy-full
-# svn co https://github.com/Leo-Jo-My/my/trunk/openwrt-dnsforwarder
-# svn co https://github.com/Leo-Jo-My/my/trunk/openwrt-udp2raw-speeder
-# svn co https://github.com/Leo-Jo-My/my/trunk/GoQuiet
-# svn co https://github.com/Leo-Jo-My/my/trunk/chinadns
-sed -i 's/mux = 1/mux = 0/g' luci-app-vssr/root/usr/share/vssr/subscribe.lua
-rm -rf ../../feeds/packages/net/kcptun
+# git clone https://github.com/Leo-Jo-My/my
+## cp -r my/dnscrypt-proxy-full ./
+# cp -r my/openwrt-dnsforwarder ./
+# cp -r my/openwrt-udp2raw-speeder ./
+# cp -r my/GoQuiet ./
+# cp -r my/chinadns ./
+# rm -rf my/
+# sed -i 's/mux = 1/mux = 0/g' luci-app-vssr/root/usr/share/vssr/subscribe.lua
+# rm -rf ../../feeds/packages/net/kcptun
 
 # Subscribe converters
 svn co https://github.com/project-openwrt/openwrt/trunk/package/ctcgfw/subconverter
