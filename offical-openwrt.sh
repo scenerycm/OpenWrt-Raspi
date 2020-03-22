@@ -87,18 +87,18 @@ git clone https://github.com/destan19/OpenAppFilter
 git clone https://github.com/SuLingGG/default-settings
 
 # Add luci-app-vssr
-git clone https://github.com/Leo-Jo-My/luci-app-vssr
+# git clone https://github.com/Leo-Jo-My/luci-app-vssr
 
 # Dependces & Optimizations for luci-app-vssr
-git clone https://github.com/Leo-Jo-My/my
-# cp -r my/dnscrypt-proxy-full ./
-cp -r my/openwrt-dnsforwarder ./
-cp -r my/openwrt-udp2raw-speeder ./
+# git clone https://github.com/Leo-Jo-My/my
+# # cp -r my/dnscrypt-proxy-full ./
+# cp -r my/openwrt-dnsforwarder ./
+# cp -r my/openwrt-udp2raw-speeder ./
 # cp -r my/GoQuiet ./
-cp -r my/chinadns ./
-rm -rf my/
-sed -i 's/mux = 1/mux = 0/g' luci-app-vssr/root/usr/share/vssr/subscribe.lua
-rm -rf ../../feeds/packages/net/kcptun
+# cp -r my/chinadns ./
+# rm -rf my/
+# sed -i 's/mux = 1/mux = 0/g' luci-app-vssr/root/usr/share/vssr/subscribe.lua
+# rm -rf ../../feeds/packages/net/kcptun
 
 # Subscribe converters
 svn co https://github.com/project-openwrt/openwrt/trunk/package/ctcgfw/subconverter
