@@ -37,6 +37,11 @@ pushd package/community
 # Add luci-app-transmission
 # git clone https://github.com/coolsnowwolf/luci/tree/master/applications/luci-app-transmission
 
+# Add docker-ce
+git clone https://github.com/openwrt/packages
+cp -a packages/utils/docker-ce  ./
+rm -rf packages/
+
 # Add mentohust & luci-app-mentohust.
 git clone https://github.com/BoringCat/luci-app-mentohust
 git clone https://github.com/KyleRicardo/MentoHUST-OpenWrt-ipk
@@ -78,16 +83,24 @@ git clone https://github.com/destan19/OpenAppFilter
 git clone https://github.com/SuLingGG/default-settings
 
 # Add luci-app-vssr
-# git clone https://github.com/Leo-Jo-My/luci-app-vssr
+git clone https://github.com/Leo-Jo-My/luci-app-vssr
 
 # Dependces & Optimizations for luci-app-vssr
+git clone https://github.com/Leo-Jo-My/my
+cp -a my/dnscrypt-proxy-full ./
+cp -a my/openwrt-dnsforwarder ./
+cp -a my/openwrt-udp2raw-speeder ./
+cp -a my/GoQuiet ./
+cp -a my/chinadns ./
+rm -rf my/
+
 # svn co https://github.com/Leo-Jo-My/my/trunk/dnscrypt-proxy-full
 # svn co https://github.com/Leo-Jo-My/my/trunk/openwrt-dnsforwarder
 # svn co https://github.com/Leo-Jo-My/my/trunk/openwrt-udp2raw-speeder
 # svn co https://github.com/Leo-Jo-My/my/trunk/GoQuiet
 # svn co https://github.com/Leo-Jo-My/my/trunk/chinadns
-# sed -i 's/mux = 1/mux = 0/g' luci-app-vssr/root/usr/share/vssr/subscribe.lua
-# rm -rf ../../feeds/packages/net/kcptun
+sed -i 's/mux = 1/mux = 0/g' luci-app-vssr/root/usr/share/vssr/subscribe.lua
+rm -rf ../../feeds/packages/net/kcptun
 
 # Subscribe converters
 svn co https://github.com/project-openwrt/openwrt/trunk/package/ctcgfw/subconverter
