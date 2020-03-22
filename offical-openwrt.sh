@@ -16,7 +16,7 @@ popd
 # Copy Lean's packages to ./package/lean.
 mkdir package/lean
 pushd package/lede/package/lean
-cp -r {adbyby,automount,baidupcs-web,ddns-scripts_aliyun,ddns-scripts_dnspod,frp,ipt2socks,kcptun,luci-app-adbyby-plus,luci-app-autoreboot,luci-app-baidupcs-web,luci-app-familycloud,luci-app-flowoffload,luci-app-frpc,luci-app-kodexplorer,luci-app-mwan3helper,luci-app-n2n_v2,luci-app-netdata,luci-app-nps,luci-app-syncdial,luci-app-usb-printer,luci-app-unblockmusic,luci-app-unblockneteasemusic-go,luci-app-unblockneteasemusic-mini,luci-app-verysync,luci-app-vsftpd,luci-app-xlnetacc,luci-app-zerotier,n2n_v2,npc,pdnsd-alt,shadowsocksr-libev,simple-obfs,srelay,trojan,UnblockNeteaseMusic,UnblockNeteaseMusicGo,v2ray,v2ray-plugin,verysync,vsftpd-alt,luci-app-dockerman,luci-lib-docker,microsocks} "../../../lean"
+cp -r {adbyby,automount,baidupcs-web,ddns-scripts_aliyun,ddns-scripts_dnspod,frp,ipt2socks,kcptun,luci-app-adbyby-plus,luci-app-autoreboot,luci-app-baidupcs-web,luci-app-familycloud,luci-app-flowoffload,luci-app-frpc,luci-app-kodexplorer,luci-app-mwan3helper,luci-app-n2n_v2,luci-app-netdata,luci-app-nps,luci-app-syncdial,luci-app-usb-printer,luci-app-unblockmusic,luci-app-verysync,luci-app-vsftpd,luci-app-xlnetacc,luci-app-zerotier,n2n_v2,npc,pdnsd-alt,shadowsocksr-libev,simple-obfs,srelay,trojan,UnblockNeteaseMusic,UnblockNeteaseMusicGo,v2ray,v2ray-plugin,verysync,vsftpd-alt,luci-app-dockerman,luci-lib-docker,microsocks} "../../../lean"
 popd
 
 # Add upx & ucl
@@ -37,14 +37,14 @@ pushd package/community
 
 # Add docker-ce
 # git clone https://github.com/openwrt/packages
-git clone -b dev-19.07 https://github.com/Lienol/openwrt-packages
-cp -r openwrt-packages/utils/docker-ce  ./
-cp -r openwrt-packages/utils/cgroupfs-mount  ./
-cp -r openwrt-packages/utils/containerd  ./
-cp -r openwrt-packages/utils/libnetwork  ./
-cp -r openwrt-packages/utils/tini  ./
-cp -r openwrt-packages/utils/runc  ./
-rm -rf openwrt-packages/
+# git clone -b dev-19.07 https://github.com/Lienol/openwrt-packages
+# cp -r openwrt-packages/utils/docker-ce  ./
+# cp -r openwrt-packages/utils/cgroupfs-mount  ./
+# cp -r openwrt-packages/utils/containerd  ./
+# cp -r openwrt-packages/utils/libnetwork  ./
+# cp -r openwrt-packages/utils/tini  ./
+# cp -r openwrt-packages/utils/runc  ./
+# rm -rf openwrt-packages/
 
 # Add mentohust & luci-app-mentohust.
 git clone https://github.com/BoringCat/luci-app-mentohust
@@ -87,18 +87,18 @@ git clone https://github.com/destan19/OpenAppFilter
 git clone https://github.com/SuLingGG/default-settings
 
 # Add luci-app-vssr
-# git clone https://github.com/Leo-Jo-My/luci-app-vssr
+git clone https://github.com/Leo-Jo-My/luci-app-vssr
 
 # Dependces & Optimizations for luci-app-vssr
-# git clone https://github.com/Leo-Jo-My/my
-## cp -r my/dnscrypt-proxy-full ./
-# cp -r my/openwrt-dnsforwarder ./
-# cp -r my/openwrt-udp2raw-speeder ./
+git clone https://github.com/Leo-Jo-My/my
+# cp -r my/dnscrypt-proxy-full ./
+cp -r my/openwrt-dnsforwarder ./
+cp -r my/openwrt-udp2raw-speeder ./
 # cp -r my/GoQuiet ./
-# cp -r my/chinadns ./
-# rm -rf my/
-# sed -i 's/mux = 1/mux = 0/g' luci-app-vssr/root/usr/share/vssr/subscribe.lua
-# rm -rf ../../feeds/packages/net/kcptun
+cp -r my/chinadns ./
+rm -rf my/
+sed -i 's/mux = 1/mux = 0/g' luci-app-vssr/root/usr/share/vssr/subscribe.lua
+rm -rf ../../feeds/packages/net/kcptun
 
 # Subscribe converters
 svn co https://github.com/project-openwrt/openwrt/trunk/package/ctcgfw/subconverter
