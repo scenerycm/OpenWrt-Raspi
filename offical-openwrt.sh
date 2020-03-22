@@ -39,11 +39,11 @@ pushd package/community
 
 # Add docker-ce
 git clone https://github.com/openwrt/packages
-cp -a packages/utils/docker-ce  ./
-cp -a packages/utils/cgroupfs-mount  ./
-cp -a packages/utils/containerd  ./
-cp -a packages/utils/libnetwork  ./
-cp -a packages/utils/tini  ./
+cp -r packages/utils/docker-ce  ./
+cp -r packages/utils/cgroupfs-mount  ./
+cp -r packages/utils/containerd  ./
+cp -r packages/utils/libnetwork  ./
+cp -r packages/utils/tini  ./
 rm -rf packages/
 
 # Add mentohust & luci-app-mentohust.
@@ -91,11 +91,11 @@ git clone https://github.com/Leo-Jo-My/luci-app-vssr
 
 # Dependces & Optimizations for luci-app-vssr
 git clone https://github.com/Leo-Jo-My/my
-cp -a my/dnscrypt-proxy-full ./
-cp -a my/openwrt-dnsforwarder ./
-cp -a my/openwrt-udp2raw-speeder ./
-cp -a my/GoQuiet ./
-cp -a my/chinadns ./
+cp -r my/dnscrypt-proxy-full ./
+cp -r my/openwrt-dnsforwarder ./
+cp -r my/openwrt-udp2raw-speeder ./
+cp -r my/GoQuiet ./
+cp -r my/chinadns ./
 rm -rf my/
 
 # svn co https://github.com/Leo-Jo-My/my/trunk/dnscrypt-proxy-full
