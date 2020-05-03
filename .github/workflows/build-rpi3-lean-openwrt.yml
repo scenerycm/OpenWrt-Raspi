@@ -16,15 +16,15 @@ on:
       - master
     paths:
       - 'rpi3-lean-openwrt.config'
-  schedule:
-    - cron: 0 15 * * *
+  # schedule:
+  #   - cron: 0 15 * * *
 #  watch:
 #    types: [started]
 
 env:
   REPO_URL: https://github.com/coolsnowwolf/lede
   REPO_BRANCH: master
-  CONFIG_FILE: rpi3-lean-openwrt.config
+  CONFIG_FILE: config/rpi3-lean-openwrt.config
   DIY_SH: lean-openwrt.sh
   DOWNLOAD_URL_FILE: Tmp-Link-Url.txt
   TZ: Asia/Shanghai

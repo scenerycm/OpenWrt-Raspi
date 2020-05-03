@@ -6,7 +6,7 @@
 # Blog: https://p3terx.com
 #=================================================
 
-name: Build Raspberry Pi 4 Lean's OpenWrt
+name: Build Raspberry Pi 3 Offical OpenWrt
 
 on:
   repository_dispatch:
@@ -16,18 +16,18 @@ on:
     branches:
       - master
     paths:
-      - 'config/lean/rpi4-lean-openwrt.config'
-  # schedule:
-  #   - cron: 0 18 * * *
+      - 'config/offical/rpi3-offical-openwrt.config'
+  schedule:
+    - cron: 0 18 * * *
 #  watch:
 #    types: started
 
 env:
-  REPO_URL: https://github.com/coolsnowwolf/lede
-  REPO_BRANCH: master
-  CONFIG_FILE: config/lean/rpi4-lean-openwrt.config
-  DEVICE: openwrt-bcm27xx-bcm2711-rpi-4
-  DIY_SH: scripts/lean-openwrt.sh
+  REPO_URL: https://github.com/openwrt/openwrt
+  REPO_BRANCH: openwrt-19.07
+  CONFIG_FILE: config/offical-19.07/rpi3-offical-openwrt.config
+  DEVICE: openwrt-bcm27xx-bcm2710-rpi-3
+  DIY_SH: scripts/offical-openwrt.sh
   SSH_ACTIONS: false
   KMODS_IN_FIRMWARE: true
   UPLOAD_EXT4_IMAGES: true
@@ -66,6 +66,7 @@ jobs:
       run: |
         cd openwrt
         echo "::set-env name=OPENWRTROOT::$PWD"
+        sed -i 's/luci.git/luci.git\;openwrt-19.07/g' feeds.conf.default
         ./scripts/feeds update -a
 
     - name: Install Feeds
@@ -80,6 +81,9 @@ jobs:
         chmod +x $DIY_SH
         cd $OPENWRTROOT
         ../$DIY_SH
+        ## If your device is Raspberrt Pi 4B:
+        # chmod +x ../scripts/enable-rpi4-wifi.sh
+        # ../scripts/enable-rpi4-wifi.sh
 
     - name: SSH Connection To Actions
       uses: P3TERX/debugger-action@master
@@ -106,7 +110,7 @@ jobs:
         make tools/compile -j$(nproc) || make tools/compile -j1 V=s
         make toolchain/compile -j$(nproc) || make toolchain/compile -j1 V=s
         make target/compile -j$(nproc) || make target/compile -j1 V=s IGNORE_ERRORS=1
-        make diffconfig
+        make buildinfo
         make package/compile -j$(nproc) IGNORE_ERRORS=1 || make package/compile -j1 V=s IGNORE_ERRORS=1
         make package/index
         echo "::set-output name=status::success"
@@ -135,12 +139,12 @@ jobs:
         then
             mkdir -p files/www/snapshots/targets
             cp -r bin/targets/$TARGET files/www/snapshots/targets
-            cp ../config/opkg/distfeeds-18.06-local.conf files/etc/opkg/distfeeds.conf
+            cp ../config/opkg/distfeeds-19.07-local.conf files/etc/opkg/distfeeds.conf
             sed -i "s/subtarget/$SUBTARGET/g" files/etc/opkg/distfeeds.conf
             sed -i "s/target\//$TARGET\//g" files/etc/opkg/distfeeds.conf
             sed -i "s/platform/$PLATFORM/g" files/etc/opkg/distfeeds.conf
         else
-            cp ../config/opkg/distfeeds-18.06-remote.conf files/etc/opkg/distfeeds.conf
+            cp ../config/opkg/distfeeds-19.07-remote.conf files/etc/opkg/distfeeds.conf
             sed -i "s/subtarget/$SUBTARGET/g" files/etc/opkg/distfeeds.conf
             sed -i "s/target\//$TARGET\//g" files/etc/opkg/distfeeds.conf
             sed -i "s/platform/$PLATFORM/g" files/etc/opkg/distfeeds.conf
@@ -184,8 +188,8 @@ jobs:
       uses: actions/upload-artifact@master
       if: steps.generate.outputs.status == 'success'
       with:
-        name: config.seed
-        path: openwrt/bin/targets/${{ env.TARGET }}/${{ env.SUBTARGET }}/config.seed
+        name: config.buildinfo
+        path: openwrt/bin/targets/${{ env.TARGET }}/${{ env.SUBTARGET }}/config.buildinfo
         
     - name: Upload Packages-Server
       uses: actions/upload-artifact@master

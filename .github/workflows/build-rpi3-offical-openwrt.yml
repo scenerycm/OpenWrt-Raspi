@@ -8,179 +8,250 @@
 
 name: Build Raspberry Pi 3 Offical OpenWrt
 
-on: 
+on:
+  repository_dispatch:
   release:
-    types: [published]
+    types: published
   push:
-    branches: 
+    branches:
       - master
     paths:
-      - 'rpi3-offical-openwrt.config'
-#  schedule:
-#    - cron: 0 18 * * *
+      - 'config/offical/rpi3-offical-openwrt.config'
+  schedule:
+    - cron: 0 18 * * *
 #  watch:
-#    types: [started]
+#    types: started
 
 env:
   REPO_URL: https://github.com/openwrt/openwrt
-  REPO_BRANCH: v19.07.2
-  CONFIG_FILE: rpi3-offical-openwrt.config
-  DIY_SH: offical-openwrt.sh
-  FREE_UP_DISK: true
+  REPO_BRANCH: master
+  CONFIG_FILE: config/offical/rpi3-offical-openwrt.config
+  DEVICE: openwrt-bcm27xx-bcm2710-rpi-3
+  DIY_SH: scripts/offical-openwrt.sh
   SSH_ACTIONS: false
+  KMODS_IN_FIRMWARE: true
+  UPLOAD_EXT4_IMAGES: true
+  UPLOAD_SQUASHFS_IMAGES: true
+  UPLOAD_ROOTFS: true
+  UPLOAD_WETRANSFER: true
+  UPLOAD_COWTRANSFER: true
   TZ: Asia/Shanghai
 
 jobs:
   build:
     runs-on: ubuntu-latest
+    if: github.event.repository.owner.id == github.event.sender.id
 
     steps:
     - name: Checkout
       uses: actions/checkout@master
 
-    - name: Initialization environment
+    - name: Initialization Environment
       env:
         DEBIAN_FRONTEND: noninteractive
       run: |
         sudo swapoff /swapfile
-        sudo rm -rf /swapfile /etc/apt/sources.list.d/*
+        sudo rm -rf /swapfile /etc/apt/sources.list.d/* /usr/share/dotnet /usr/local/lib/android /opt/ghc
         sudo -E apt-get -qq update
-        sudo -E apt-get -qq install build-essential asciidoc binutils bzip2 gawk gettext git libncurses5-dev libz-dev patch unzip zlib1g-dev lib32gcc1 libc6-dev-i386 subversion flex uglifyjs git-core gcc-multilib g++-multilib p7zip p7zip-full msmtp libssl-dev texinfo libglib2.0-dev xmlto qemu-utils upx libelf-dev autoconf automake libtool autopoint device-tree-compiler
-        curl -fsSL https://raw.githubusercontent.com/P3TERX/dotfiles/master/.bashrc >> ~/.bashrc
-
-    - name: Free up disk space
-      if: env.FREE_UP_DISK == 'true'
-      env:
-        DEBIAN_FRONTEND: noninteractive
-      run: |
-        sudo rm -rf /usr/share/dotnet
-        docker rmi `docker images -q`
-        sudo -E apt-get -q purge azure-cli ghc* zulu* hhvm llvm* firefox google* dotnet* powershell openjdk* mysql* php*
+        sudo -E apt-get -qq install build-essential asciidoc binutils bzip2 gawk gettext git libncurses5-dev libz-dev patch unzip zlib1g-dev lib32gcc1 libc6-dev-i386 subversion flex uglifyjs gcc-multilib g++-multilib p7zip p7zip-full msmtp libssl-dev texinfo libglib2.0-dev xmlto qemu-utils upx libelf-dev autoconf automake libtool autopoint device-tree-compiler antlr3 gperf
         sudo -E apt-get -qq autoremove --purge
         sudo -E apt-get -qq clean
+        sudo timedatectl set-timezone "$TZ"
+        curl -fsSL https://raw.githubusercontent.com/P3TERX/dotfiles/master/.bashrc >> ~/.bashrc
 
-    - name: Clone source code
+    - name: Clone Source Code
       run: git clone --depth 1 $REPO_URL -b $REPO_BRANCH openwrt
 
     - name: Update Feeds
       run: |
-       cd openwrt
-       echo "src-git lienol https://github.com/Lienol/openwrt-package" >> feeds.conf.default
-       ./scripts/feeds update -a
-
-    - name: Install feeds
-      run: cd openwrt && ./scripts/feeds install -a
-
-    - name: Load custom configuration
-      run: |
-        [ -e files ] && mv files openwrt/files
-        [ -e $CONFIG_FILE ] && mv $CONFIG_FILE openwrt/.config
-        chmod +x $DIY_SH
         cd openwrt
+        echo "::set-env name=OPENWRTROOT::$PWD"
+        sed -i 's/luci.git/luci.git\;openwrt-19.07/g' feeds.conf.default
+        ./scripts/feeds update -a
+
+    - name: Install Feeds
+      run: |
+        cd $OPENWRTROOT
+        ./scripts/feeds install -a
+
+    - name: Load Custom Configuration
+      run: |
+        [ -e files ] && mv files $OPENWRTROOT/files
+        [ -e $CONFIG_FILE ] && mv $CONFIG_FILE $OPENWRTROOT/.config
+        chmod +x $DIY_SH
+        cd $OPENWRTROOT
         ../$DIY_SH
-        make defconfig
+        ## If your device is Raspberrt Pi 4B:
+        # chmod +x ../scripts/enable-rpi4-wifi.sh
+        # ../scripts/enable-rpi4-wifi.sh
 
-    - name: SSH connection to Actions
+    - name: SSH Connection To Actions
       uses: P3TERX/debugger-action@master
-      if: env.SSH_ACTIONS == 'true'
+      if: env.SSH_ACTIONS == 'true' || contains(github.event.action, 'ssh')
 
-    - name: Download package
+    - name: Download Package
       id: package
       run: |
-        cd openwrt
+        cd $OPENWRTROOT
+        if "$KMODS_IN_FIRMWARE" = 'true'
+        then
+            echo "CONFIG_ALL_KMODS=y" >> .config
+        fi
+        make defconfig
         make download -j8
         find dl -size -1024c -exec ls -l {} \;
         find dl -size -1024c -exec rm -f {} \;
 
-    - name: Compile the firmware
+    - name: Compile Packages
       id: compile
       run: |
-        cd openwrt
+        cd $OPENWRTROOT
         echo -e "$(nproc) thread compile"
-        make -j$(nproc) || make -j1 V=s
+        make tools/compile -j$(nproc) || make tools/compile -j1 V=s
+        make toolchain/compile -j$(nproc) || make toolchain/compile -j1 V=s
+        make target/compile -j$(nproc) || make target/compile -j1 V=s IGNORE_ERRORS=1
+        make buildinfo
+        make package/compile -j$(nproc) IGNORE_ERRORS=1 || make package/compile -j1 V=s IGNORE_ERRORS=1
+        make package/index
         echo "::set-output name=status::success"
 
+    - name: Set Environment Variable
+      if: steps.compile.outputs.status == 'success'
+      run: |
+        cd $OPENWRTROOT/bin/packages/*
+        PLATFORM=$(basename `pwd`)
+        echo "::set-env name=PLATFORM::$PLATFORM"
+        cd $OPENWRTROOT/bin/targets/*
+        TARGET=$(basename `pwd`)
+        echo "::set-env name=TARGET::$TARGET"
+        cd *
+        SUBTARGET=$(basename `pwd`)
+        echo "::set-env name=SUBTARGET::$SUBTARGET"
+        echo "::set-env name=FIRMWARE::$PWD"
+
+    - name: Generate Firmware
+      if: steps.compile.outputs.status == 'success'
+      id: generate
+      run: |
+        cd $OPENWRTROOT
+        mkdir -p files/etc/opkg
+        if "$KMODS_IN_FIRMWARE" = 'true'
+        then
+            mkdir -p files/www/snapshots/targets
+            cp -r bin/targets/$TARGET files/www/snapshots/targets
+            cp ../config/opkg/distfeeds-19.07-local.conf files/etc/opkg/distfeeds.conf
+            sed -i "s/subtarget/$SUBTARGET/g" files/etc/opkg/distfeeds.conf
+            sed -i "s/target\//$TARGET\//g" files/etc/opkg/distfeeds.conf
+            sed -i "s/platform/$PLATFORM/g" files/etc/opkg/distfeeds.conf
+        else
+            cp ../config/opkg/distfeeds-19.07-remote.conf files/etc/opkg/distfeeds.conf
+            sed -i "s/subtarget/$SUBTARGET/g" files/etc/opkg/distfeeds.conf
+            sed -i "s/target\//$TARGET\//g" files/etc/opkg/distfeeds.conf
+            sed -i "s/platform/$PLATFORM/g" files/etc/opkg/distfeeds.conf
+        fi
+        make package/install -j$(nproc) || make package/install -j1 V=s
+        make target/install -j$(nproc) || make target/install -j1 V=s
+        make checksum
+        grep '^CONFIG_TARGET.*DEVICE.*=y' .config | sed -r 's/.*DEVICE_(.*)=y/\1/' > DEVICE_NAME
+        [ -s DEVICE_NAME ] && echo "::set-env name=DEVICE_NAME::_$(cat DEVICE_NAME)"
+        echo "::set-env name=FILE_DATE::_$(date +"%Y%m%d%H%M")"
+        echo "::set-output name=status::success"
+        
+    - name: Deploy Packages-Server
+      if: steps.generate.outputs.status == 'success'
+      run: |
+        mkdir -p server/web/snapshots/targets/$TARGET/$SUBTARGET
+        cp -r $OPENWRTROOT/bin/packages server/web/snapshots
+        cp -r $OPENWRTROOT/bin/targets/$TARGET/$SUBTARGET/packages server/web/snapshots/targets/$TARGET/$SUBTARGET
+        mkdir -p $OPENWRTROOT/bin/targets/$TARGET/$SUBTARGET/pre-packages-server
+        cp -r server $OPENWRTROOT/bin/targets/$TARGET/$SUBTARGET/pre-packages-server
+        cd $OPENWRTROOT/bin/targets/$TARGET/$SUBTARGET
+        zip -q -r packages-server.zip pre-packages-server/server
+        
     - name: Extract Gz Files
+      if: steps.generate.outputs.status == 'success'
       run: |
-        cd openwrt/bin/targets/brcm2708/bcm2710
-        ls -l
-        gzip -q -d openwrt-brcm2708-bcm2710-rpi-3-squashfs-factory.img.gz || true
-        gzip -q -d openwrt-brcm2708-bcm2710-rpi-3-squashfs-sysupgrade.img.gz || true
-        gzip -q -d openwrt-brcm2708-bcm2710-rpi-3-ext4-factory.img.gz || true
-        gzip -q -d openwrt-brcm2708-bcm2710-rpi-3-ext4-sysupgrade.img.gz || true
-
-    - name: Generate Sha256sum File
+        cd $OPENWRTROOT/bin/targets/$TARGET/$SUBTARGET
+        gzip -qdc $DEVICE-squashfs-factory.img.gz > $DEVICE-squashfs-factory.img || true
+        gzip -qdc $DEVICE-squashfs-sysupgrade.img.gz > $DEVICE-squashfs-sysupgrade.img || true
+        gzip -qdc $DEVICE-ext4-factory.img.gz > $DEVICE-ext4-factory.img || true
+        gzip -qdc $DEVICE-ext4-sysupgrade.img.gz > $DEVICE-ext4-sysupgrade.img || true
+        
+    - name: Generate Sha256sum File For Images
+      if: steps.generate.outputs.status == 'success'
       run: |
-        cd openwrt/bin/targets/brcm2708/bcm2710
-        rm -rf sha256sums
-        sha256sum openwrt* > sha256sums
-
+        cd $OPENWRTROOT/bin/targets/$TARGET/$SUBTARGET
+        mv sha256sums sha256sums.orig
+        sha256sum *.img > sha256sums
+        
     - name: Upload Config
       uses: actions/upload-artifact@master
-      if: steps.compile.outputs.status == 'success'
+      if: steps.generate.outputs.status == 'success'
       with:
         name: config.buildinfo
-        path: openwrt/bin/targets/brcm2708/bcm2710/config.buildinfo
+        path: openwrt/bin/targets/${{ env.TARGET }}/${{ env.SUBTARGET }}/config.buildinfo
         
-    - name: Upload Packages
+    - name: Upload Packages-Server
       uses: actions/upload-artifact@master
-      if: steps.compile.outputs.status == 'success'
+      if: steps.generate.outputs.status == 'success'
       with:
-        name: packages
-        path: openwrt/bin/packages/aarch64_cortex-a53/
+        name: packages-server
+        path: openwrt/bin/targets/${{ env.TARGET }}/${{ env.SUBTARGET }}/pre-packages-server
         
     - name: Upload Packages Info
       uses: actions/upload-artifact@master
-      if: steps.compile.outputs.status == 'success'
+      if: steps.generate.outputs.status == 'success'
       with:
-        name: openwrt-brcm2708-bcm2710-device-rpi-3.manifest
-        path: openwrt/bin/targets/brcm2708/bcm2710/openwrt-brcm2708-bcm2710-device-rpi-3.manifest
-        
-    - name: Upload Kernel Packages
-      uses: actions/upload-artifact@master
-      if: steps.compile.outputs.status == 'success'
-      with:
-        name: kernel-packages
-        path: openwrt/bin/targets/brcm2708/bcm2710/packages/
+        name: ${{ env.DEVICE }}.manifest
+        path: openwrt/bin/targets/${{ env.TARGET }}/${{ env.SUBTARGET }}/${{ env.DEVICE }}.manifest
         
     - name: Upload RootFS Archive
       uses: actions/upload-artifact@master
-      if: steps.compile.outputs.status == 'success'
+      if: steps.generate.outputs.status == 'success' && env.UPLOAD_ROOTFS == 'true'
       with:
-        name: openwrt-brcm2708-bcm2710-device-rpi-3-rootfs.tar.gz
-        path: openwrt/bin/targets/brcm2708/bcm2710/openwrt-brcm2708-bcm2710-device-rpi-3-rootfs.tar.gz
+        name: ${{ env.DEVICE }}-rootfs.tar.gz
+        path: openwrt/bin/targets/${{ env.TARGET }}/${{ env.SUBTARGET }}/${{ env.DEVICE }}-rootfs.tar.gz
         
     - name: Upload SquashFS Factory Image
       uses: actions/upload-artifact@master
-      if: steps.compile.outputs.status == 'success'
+      if: steps.generate.outputs.status == 'success' && env.UPLOAD_SQUASHFS_IMAGES == 'true'
       with:
-        name: openwrt-brcm2708-bcm2710-rpi-3-squashfs-factory.img
-        path: openwrt/bin/targets/brcm2708/bcm2710/openwrt-brcm2708-bcm2710-rpi-3-squashfs-factory.img
+        name: ${{ env.DEVICE }}-squashfs-factory.img
+        path: openwrt/bin/targets/${{ env.TARGET }}/${{ env.SUBTARGET }}/${{ env.DEVICE }}-squashfs-factory.img
         
     - name: Upload SquashFS Sysupgrade Image
       uses: actions/upload-artifact@master
-      if: steps.compile.outputs.status == 'success'
+      if: steps.generate.outputs.status == 'success' && env.UPLOAD_SQUASHFS_IMAGES == 'true'
       with:
-        name: openwrt-brcm2708-bcm2710-rpi-3-squashfs-sysupgrade.img
-        path: openwrt/bin/targets/brcm2708/bcm2710/openwrt-brcm2708-bcm2710-rpi-3-squashfs-sysupgrade.img
+        name: ${{ env.DEVICE }}-squashfs-sysupgrade.img
+        path: openwrt/bin/targets/${{ env.TARGET }}/${{ env.SUBTARGET }}/${{ env.DEVICE }}-squashfs-sysupgrade.img
         
     - name: Upload Ext4 Factory Image
       uses: actions/upload-artifact@master
-      if: steps.compile.outputs.status == 'success'
+      if: steps.generate.outputs.status == 'success' && env.UPLOAD_EXT4_IMAGES == 'true'
       with:
-        name: openwrt-brcm2708-bcm2710-rpi-3-ext4-factory.img
-        path: openwrt/bin/targets/brcm2708/bcm2710/openwrt-brcm2708-bcm2710-rpi-3-ext4-factory.img
+        name: ${{ env.DEVICE }}-ext4-factory.img
+        path: openwrt/bin/targets/${{ env.TARGET }}/${{ env.SUBTARGET }}/${{ env.DEVICE }}-ext4-factory.img
         
     - name: Upload Ext4 Sysupgrade Image
       uses: actions/upload-artifact@master
-      if: steps.compile.outputs.status == 'success'
+      if: steps.generate.outputs.status == 'success' && env.UPLOAD_EXT4_IMAGES == 'true'
       with:
-        name: openwrt-brcm2708-bcm2710-rpi-3-ext4-sysupgrade.img
-        path: openwrt/bin/targets/brcm2708/bcm2710/openwrt-brcm2708-bcm2710-rpi-3-ext4-sysupgrade.img
-        
+        name: ${{ env.DEVICE }}-ext4-sysupgrade.img
+        path: openwrt/bin/targets/${{ env.TARGET }}/${{ env.SUBTARGET }}/${{ env.DEVICE }}-ext4-sysupgrade.img
+
     - name: Upload Images Sha256sums
       uses: actions/upload-artifact@master
-      if: steps.compile.outputs.status == 'success'
+      if: steps.generate.outputs.status == 'success'
       with:
         name: sha256sums
-        path: openwrt/bin/targets/brcm2708/bcm2710/sha256sums
+        path: openwrt/bin/targets/${{ env.TARGET }}/${{ env.SUBTARGET }}/sha256sums
+
+    - name: Organize Files
+      id: organize
+      if: steps.generate.outputs.status == 'success' && !cancelled()
+      run: |
+        cd $OPENWRTROOT/bin/targets/$TARGET/$SUBTARGET
+        rm -rf *.img packages pre-packages-server sha256sums
+        mv sha256sums.orig sha256sums
+        echo "::set-output name=status::success"
