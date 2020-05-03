@@ -6,7 +6,7 @@
 # Blog: https://p3terx.com
 #=================================================
 
-name: Build Raspberry Pi 3 Offical OpenWrt
+name: Build Raspberry Pi 3 Offical-19.07 OpenWrt
 
 on:
   repository_dispatch:
@@ -16,7 +16,7 @@ on:
     branches:
       - master
     paths:
-      - 'config/offical/rpi3-offical-openwrt.config'
+      - 'config/offical-19.07/rpi3-offical-openwrt.config'
   schedule:
     - cron: 0 18 * * *
 #  watch:
@@ -66,7 +66,7 @@ jobs:
       run: |
         cd openwrt
         echo "::set-env name=OPENWRTROOT::$PWD"
-        sed -i 's/luci.git/luci.git\;openwrt-19.07/g' feeds.conf.default
+        # sed -i 's/luci.git/luci.git\;openwrt-19.07/g' feeds.conf.default
         ./scripts/feeds update -a
 
     - name: Install Feeds
