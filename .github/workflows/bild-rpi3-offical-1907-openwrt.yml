@@ -27,6 +27,7 @@ env:
   REPO_BRANCH: openwrt-19.07
   CONFIG_FILE: config/offical-19.07/rpi3-offical-openwrt.config
   DEVICE: openwrt-brcm2708-bcm2710-rpi-3
+  ROOTFS_DEVICE: openwrt-brcm2708-bcm2710-device-rpi-3
   DIY_SH: scripts/offical-openwrt.sh
   SSH_ACTIONS: false
   KMODS_IN_FIRMWARE: true
@@ -202,15 +203,15 @@ jobs:
       uses: actions/upload-artifact@master
       if: steps.generate.outputs.status == 'success'
       with:
-        name: ${{ env.DEVICE }}.manifest
-        path: openwrt/bin/targets/${{ env.TARGET }}/${{ env.SUBTARGET }}/${{ env.DEVICE }}.manifest
+        name: ${{ env.ROOTFS_DEVICE }}.manifest
+        path: openwrt/bin/targets/${{ env.TARGET }}/${{ env.SUBTARGET }}/${{ env.DEVROOTFS_DEVICEICE }}.manifest
         
     - name: Upload RootFS Archive
       uses: actions/upload-artifact@master
       if: steps.generate.outputs.status == 'success' && env.UPLOAD_ROOTFS == 'true'
       with:
-        name: ${{ env.DEVICE }}-rootfs.tar.gz
-        path: openwrt/bin/targets/${{ env.TARGET }}/${{ env.SUBTARGET }}/${{ env.DEVICE }}-rootfs.tar.gz
+        name: ${{ env.ROOTFS_DEVICE }}-rootfs.tar.gz
+        path: openwrt/bin/targets/${{ env.TARGET }}/${{ env.SUBTARGET }}/${{ env.ROOTFS_DEVICE }}-rootfs.tar.gz
         
     - name: Upload SquashFS Factory Image
       uses: actions/upload-artifact@master
