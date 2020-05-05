@@ -28,6 +28,7 @@ env:
   CONFIG_FILE: config/offical-19.07/rpi4-offical-openwrt.config
   DEVICE: openwrt-brcm2708-bcm2710-rpi-3
   ROOTFS_DEVICE: openwrt-brcm2708-bcm2710-device-rpi-3
+  DOCKERHUB_TOKEN: c0b473a7-b9e0-4014-8181-b1ae875cccbb
   DIY_SH: scripts/offical-openwrt.sh
   SSH_ACTIONS: false
   KMODS_IN_FIRMWARE: true
@@ -212,6 +213,16 @@ jobs:
         name: ${{ env.ROOTFS_DEVICE }}-rootfs.tar.gz
         path: openwrt/bin/targets/${{ env.TARGET }}/${{ env.SUBTARGET }}/${{ env.ROOTFS_DEVICE }}-rootfs.tar.gz
         
+    - name: Generate docker image
+      if: steps.generate.outputs.status == 'success' && env.UPLOAD_ROOTFS == 'true'
+      run: |
+        current_time=`date "+%Y-%m-%d"`
+        echo ${{ DOCKERHUB_TOKEN }} | xargs docker login -u scenerycm --password
+        docker import openwrt/bin/targets/${{ env.TARGET }}/${{ env.SUBTARGET }}/${{ env.ROOTFS_DEVICE }}-rootfs.tar.gz scenerycm/${{ env.ROOTFS_DEVICE }}:${{ current_time }}
+        docker push scenerycm/${{ env.ROOTFS_DEVICE }}:${{ current_time }}
+        docker tag scenerycm/${{ env.ROOTFS_DEVICE }}:${{ current_time }} scenerycm/${{ env.ROOTFS_DEVICE }}:latest
+        docker push scenerycm/${{ env.ROOTFS_DEVICE }}:latest
+
     - name: Upload SquashFS Factory Image
       uses: actions/upload-artifact@master
       if: steps.generate.outputs.status == 'success' && env.UPLOAD_SQUASHFS_IMAGES == 'true'

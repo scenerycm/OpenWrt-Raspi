@@ -17,10 +17,10 @@ on:
       - master
     paths:
       - 'config/offical-19.07/rpi3-offical-openwrt.config'
-  schedule:
-    - cron: 0 18 * * *
-  watch:
-    types: started
+  # schedule:
+  #   - cron: 0 18 * * *
+  # watch:
+  #   types: started
 
 env:
   REPO_URL: https://github.com/openwrt/openwrt
