@@ -217,10 +217,10 @@ jobs:
       if: steps.generate.outputs.status == 'success' && env.UPLOAD_ROOTFS == 'true'
       run: |
         current_time=`date "+%Y-%m-%d"`
-        echo ${{ DOCKERHUB_TOKEN }} | xargs docker login -u scenerycm --password
-        docker import openwrt/bin/targets/${{ env.TARGET }}/${{ env.SUBTARGET }}/${{ env.ROOTFS_DEVICE }}-rootfs.tar.gz scenerycm/${{ env.ROOTFS_DEVICE }}:${{ current_time }}
-        docker push scenerycm/${{ env.ROOTFS_DEVICE }}:${{ current_time }}
-        docker tag scenerycm/${{ env.ROOTFS_DEVICE }}:${{ current_time }} scenerycm/${{ env.ROOTFS_DEVICE }}:latest
+        echo ${{ env.DOCKERHUB_TOKEN }} | xargs docker login -u scenerycm --password
+        docker import openwrt/bin/targets/${{ env.TARGET }}/${{ env.SUBTARGET }}/${{ env.ROOTFS_DEVICE }}-rootfs.tar.gz scenerycm/${{ env.ROOTFS_DEVICE }}:$current_time
+        docker push scenerycm/${{ env.ROOTFS_DEVICE }}:$current_time
+        docker tag scenerycm/${{ env.ROOTFS_DEVICE }}:$current_time scenerycm/${{ env.ROOTFS_DEVICE }}:latest
         docker push scenerycm/${{ env.ROOTFS_DEVICE }}:latest
 
     - name: Upload SquashFS Factory Image
