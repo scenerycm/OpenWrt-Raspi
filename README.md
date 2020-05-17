@@ -1,6 +1,6 @@
-### 树莓派 3B/3B+/4B OpenWrt 固件全自动编译 & 发布 Docker 镜像到 Dockerhub 
+## 树莓派 3B/3B+/4B OpenWrt 固件全自动编译 & 发布 Docker 镜像到 Dockerhub 
 
----
+
 
 此项目参考 [SuLingGG/OpenWrt-Rpi](https://github.com/SuLingGG/OpenWrt-Rpi)，**在此表示感谢！**
 
@@ -10,9 +10,7 @@
 
 *此博客将会持续更新关于树莓派与OpenWrt的相关文章，如果您觉得项目不错请持续关注哦~~*
 
-
-
-#### 项目支持设备与编译状态：
+### 项目支持设备与编译状态：
 
 ---
 
@@ -37,9 +35,7 @@
 
 **注意**：由于国内到 github 与 dockerhub 的网络偶尔会抽风，建议在良好的网络环境下下载相关文件。
 
-
-
-#### 使用 Docker 运行 OpenWrt 的优势
+### 使用 Docker 运行 OpenWrt 的优势
 
 ---
 
@@ -49,9 +45,7 @@
 
 **更重要的一点是，我们可以同时让多个版本的 Open­Wrt 运行在 dokcer 中，可以同时完成对多个固件的测试工作。时间就是生命啊!**
 
-
-
-#### 感谢
+### 感谢
 
 ---
 
