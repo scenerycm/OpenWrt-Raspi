@@ -17,8 +17,8 @@ on:
       - master
     paths:
       - 'config/offical/rpi3-offical-openwrt.config'
-  # schedule:
-  #   - cron: 0 18 * * *
+  schedule:
+    - cron: 0 8 * * *
 #  watch:
 #    types: started
 
@@ -27,6 +27,8 @@ env:
   REPO_BRANCH: master
   CONFIG_FILE: config/offical/rpi3-offical-openwrt.config
   DEVICE: openwrt-bcm27xx-bcm2710-rpi-3
+  ROOTFS_DEVICE: openwrt-bcm27xx-bcm2710-rpi-3
+  DOCKERHUB_TOKEN: a5b24901-5ade-4284-b7ba-f0bdc25c95eb
   DIY_SH: scripts/offical-openwrt.sh
   SSH_ACTIONS: false
   KMODS_IN_FIRMWARE: true
@@ -211,6 +213,16 @@ jobs:
       with:
         name: ${{ env.DEVICE }}-rootfs.tar.gz
         path: openwrt/bin/targets/${{ env.TARGET }}/${{ env.SUBTARGET }}/${{ env.DEVICE }}-rootfs.tar.gz
+
+    - name: Generate docker image
+      if: steps.generate.outputs.status == 'success' && env.UPLOAD_ROOTFS == 'true'
+      run: |
+        current_time=`date "+%Y-%m-%d"`
+        echo ${{ env.DOCKERHUB_TOKEN }} | xargs docker login -u scenerycmopen --password
+        docker import openwrt/bin/targets/${{ env.TARGET }}/${{ env.SUBTARGET }}/${{ env.ROOTFS_DEVICE }}-rootfs.tar.gz scenerycmopen/${{ env.ROOTFS_DEVICE }}-offical-openwrt:$current_time
+        docker push scenerycmopen/${{ env.ROOTFS_DEVICE }}-offical-openwrt:$current_time
+        docker tag scenerycmopen/${{ env.ROOTFS_DEVICE }}-offical-openwrt:$current_time scenerycmopen/${{ env.ROOTFS_DEVICE }}-offical-openwrt:latest
+        docker push scenerycmopen/${{ env.ROOTFS_DEVICE }}-offical-openwrt:latest                
         
     - name: Upload SquashFS Factory Image
       uses: actions/upload-artifact@master
