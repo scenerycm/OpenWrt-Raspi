@@ -14,11 +14,11 @@
 
 ---
 
-| 固件类型        | 支持设备                              | 编译状态                                                     | 源码地址                                                     | 固件地址                                                     | Docker 镜像地址                                  |
-| --------------- | ------------------------------------- | ------------------------------------------------------------ | ------------------------------------------------------------ | ------------------------------------------------------------ | ------------------------------------------------ |
-| Lean            | 树莓派 3B/3B+/4B                      | ![](https://img.shields.io/github/workflow/status/1orz/My-action/Build-Lean-lede?label=) | [coolsnowwolf/lede](https://github.com/coolsnowwolf/lede)    | [Actions](https://github.com/scenerycm/OpenWrt-Raspi/actions) | [Dockerhub](https://hub.docker.com/repositories) |
-| Offical-19.07   | 树莓派 3B/3B+<br />Docker镜像可用于4B | ![](https://img.shields.io/github/workflow/status/1orz/My-action/Build-Lean-lede?label=) | [openwrt/openwrt](https://github.com/openwrt/openwrt/tree/openwrt-19.07) | [Actions](https://github.com/scenerycm/OpenWrt-Raspi/actions) | [Dockerhub](https://hub.docker.com/repositories) |
-| Project-OpenWrt | 树莓派 3B/3B+/4B                      | ![](https://img.shields.io/github/workflow/status/1orz/My-action/Build-Lean-lede?label=) | [project-openwrt/openwrt](https://github.com/project-openwrt/openwrt/tree/18.06-kernel5.4) | [Actions](https://github.com/scenerycm/OpenWrt-Raspi/actions) | [Dockerhub](https://hub.docker.com/repositories) |
+| 固件类型        | 支持设备                              | 编译状态                                                     | 源码地址                                                     | 固件地址                                                     | Docker 镜像地址                                     |
+| --------------- | ------------------------------------- | ------------------------------------------------------------ | ------------------------------------------------------------ | ------------------------------------------------------------ | --------------------------------------------------- |
+| Lean            | 树莓派 3B/3B+/4B                      | ![](https://img.shields.io/github/workflow/status/1orz/My-action/Build-Lean-lede?label=) | [coolsnowwolf/lede](https://github.com/coolsnowwolf/lede)    | [Actions](https://github.com/scenerycm/OpenWrt-Raspi/actions) | [Dockerhub](https://hub.docker.com/u/scenerycmopen) |
+| Offical-19.07   | 树莓派 3B/3B+<br />Docker镜像可用于4B | ![](https://img.shields.io/github/workflow/status/1orz/My-action/Build-Lean-lede?label=) | [openwrt/openwrt](https://github.com/openwrt/openwrt/tree/openwrt-19.07) | [Actions](https://github.com/scenerycm/OpenWrt-Raspi/actions) | [Dockerhub](https://hub.docker.com/u/scenerycmopen) |
+| Project-OpenWrt | 树莓派 3B/3B+/4B                      | ![](https://img.shields.io/github/workflow/status/1orz/My-action/Build-Lean-lede?label=) | [project-openwrt/openwrt](https://github.com/project-openwrt/openwrt/tree/18.06-kernel5.4) | [Actions](https://github.com/scenerycm/OpenWrt-Raspi/actions) | [Dockerhub](https://hub.docker.com/u/scenerycmopen) |
 
 固件说明：
 
