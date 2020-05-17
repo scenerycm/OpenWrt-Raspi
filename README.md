@@ -25,7 +25,7 @@
 - Lean 版固件基于 Lean 大源码编译 (Luci 采用 Lean 版 Luci 18.06 )
 - Offical-19.07 版固件基于 OpenWrt 官方 19.07 源码编译
 - Project-OpenWrt 版固件基于 Project-OpenWrt 源码18.06-kernel5.4 分支编译，基于此固件的 Docker 镜像也是我一直在 3B+ 上使用的固件，**较为推荐**。
-- 所有固件与 Docker镜像 默认密码：password
+- 所有固件与 Docker镜像 **默认密码：password**
 - 所有固件与 Docker镜像包含三个主题：Argon、Bootstrap、Material
 
 - 其中基于各类固件的 Doker 镜像在树莓派 3B、3B+、4B 上通用。
