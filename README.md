@@ -51,7 +51,7 @@
 
 ---
 
-- [SuLingGG/OpenWrt-Rpi（非常感谢）](https://github.com/SuLingGG/OpenWrt-Rpi)
+- [SuLingGG/OpenWrt-Rpi](https://github.com/SuLingGG/OpenWrt-Rpi)
 
 - [OpenWrt Source Repository](https://github.com/openwrt/openwrt/)
 
