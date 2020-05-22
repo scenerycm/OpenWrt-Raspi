@@ -17,8 +17,8 @@ on:
       - master
     paths:
       - 'config/offical/rpi3-offical-openwrt.config'
-  schedule:
-    - cron: 0 8 * * *
+  # schedule:
+  #   - cron: 0 8 * * *
 #  watch:
 #    types: started
 
