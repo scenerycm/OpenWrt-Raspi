@@ -17,8 +17,8 @@ on:
       - master
     paths:
       - 'config/lean/rpi4-lean-openwrt.config'
-  # schedule:
-  #   - cron: 0 12 * * *
+  schedule:
+    - cron: 0 16 * * *
 #  watch:
 #    types: started
 
