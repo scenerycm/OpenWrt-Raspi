@@ -17,8 +17,8 @@ on:
       - master
     paths:
       - 'config/project/rpi4-project-openwrt.config'
-  schedule:
-    - cron: 0 16 * * *
+  # schedule:
+  #   - cron: 0 16 * * *
   # watch:
   #   types: started
 
