@@ -4,6 +4,8 @@
 
 此项目参考 [SuLingGG/OpenWrt-Rpi](https://github.com/SuLingGG/OpenWrt-Rpi)，**在此表示感谢！**
 
+**由于树莓派坏了，无法做固件测试，本人以不在编译树莓派固件，dockerhub 上的旧镜像依然可用，最新固件的下载可以移步大佬的项目 https://github.com/SuLingGG/OpenWrt-Rpi ，使用 docker 的原理不变本教程依然适用。**
+
 本说明只包含此项目相关信息说明，包括但不限于：设备型号、源码版本、Docker镜像信息。
 
 **关于固件及Docker镜像的详细使用说明请前往博客文章：**[树莓派 | Docker上运行 OpenWrt 做旁路由](https://blog.sillyson.com/archives/7.html)
